@@ -1,0 +1,338 @@
+网络vtt
+WEBVTT
+
+00:00:05.200 --> 00:00:12.900
+大家好，欢迎来到第10讲，这是关于方法的。在这次讲座中，我
+Hello everyone, welcome to lecture 10, which is about methods. In this lecture, I 
+
+00:00:12.900 --> 00:00:21.000
+将向您展示如何使用堆栈向方法传递参数或参数
+will show you how you can use stack to pass arguments or parameters to a method 
+
+00:00:21.100 --> 00:00:28.900
+以及如何使用同一堆栈来创建变量——内部的局部变量
+and how the same stack can be used to create a variables-- local variables within 
+
+00:00:28.900 --> 00:00:31.900
+方法主体和
+the method body and 
+
+00:00:32.900 --> 00:00:41.000
+我还将向您展示当方法为
+I will also show you how the stack can be used to save registers when a method is 
+
+00:00:41.000 --> 00:00:48.500
+打电话。在这一部分中，我们将研究两种不同的方法，
+called. In this part, we will study two different approaches and in this lecture, 
+
+00:00:48.500 --> 00:00:57.700
+我还将介绍如何在ARM汇编代码中创建静态变量
+I will also cover how static variables can be created in an ARM assembly code 
+
+00:00:58.200 --> 00:01:01.900
+在整个过程中，我将向您介绍
+and throughout this process, I will introduce you to 
+
+00:01:03.700 --> 00:01:10.600
+一些您以前没有使用过的新ARM指令。让我们开始吧
+some new ARM instructions as well that you have not used previously. Let's start 
+
+00:01:10.600 --> 00:01:19.900
+本课的第一部分是关于推和弹出的内部工作。
+with part one of this lecture, which is about the internal working of push and pop. 
+
+00:01:22.800 --> 00:01:31.100
+幻灯片取自第9讲讲义，右侧显示，
+The slide is taken from lecture 9 handouts, which shows on the right side, 
+
+00:01:32.700 --> 00:01:37.900
+基本堆栈的实现。所以第一列表示地址
+the implementation of a basic stack. So the first column represents the addresses 
+
+00:01:37.900 --> 00:01:44.400
+第二列表示相应的值和堆栈指针
+and the second column represents the corresponding values and the stack pointer 
+
+00:01:44.400 --> 00:01:51.000
+指向堆栈的顶部。所以如果你想把东西推到堆栈上，
+points to the top of the stack. So if you want to push something on to the stack, 
+
+00:01:51.800 --> 00:01:58.700
+在推送值之前，必须将地址减小4
+you have to decrease the address by 4 before pushing the value . Similarly if you 
+
+00:01:58.700 --> 00:02:01.900
+希望从
+want to take value from the 
+
+00:02:02.000 --> 00:02:08.500
+您需要增加堆栈顶部的值。您将首先获取值，然后
+top of the stack you need to increase.. You will first take the value, then you will 
+
+00:02:08.800 --> 00:02:16.300
+可以将地址增加4。可以执行推送
+increase  the address by 4 as this can be done. The push can be performed 
+
+00:02:16.300 --> 00:02:21.800
+借助带有预索引寻址模式的存储指令和弹出指令
+with the help of store instruction with pre-indexed addressing mode and pop instruction 
+
+00:02:21.900 --> 00:02:29.400
+弹出函数可以在加载指令的帮助下使用后索引执行
+pop a function can be performed with the help of load instruction with post-indexed 
+
+00:02:29.400 --> 00:02:30.500
+寻址模式。
+addressing mode. 
+
+00:02:34.700 --> 00:02:41.800
+好吧，让我们通过一个更详细的例子来理解它
+okay, let's try to understand it with the help of a more detailed example and that 
+
+00:02:41.800 --> 00:02:49.700
+我在上一节课上给你看了。在这里，这两条MOV指令，在执行之后
+I have shown you in the last lecture. Here these two MOV instructions,, after the execution 
+
+00:02:49.700 --> 00:02:57.000
+这两条MOV指令中的R0将包含十六进制值42，R1将
+of these two MOV instructions R0 will contain value 42 in hex and R1 will 
+
+00:02:57.200 --> 00:03:02.500
+值为43。如果我们执行这些
+be having value 43. and if we execute these 
+
+00:03:02.600 --> 00:03:08.700
+考虑到堆栈指针将被定位
+instructions one by one, considering that the stack pointer is going to be located 
+
+00:03:08.700 --> 00:03:16.500
+在这个地址。让我们看看会发生什么。对于第一个“推R0”，这意味着
+at this address. Let's see what happen. For this first 'Push R0' that means 
+
+00:03:16.500 --> 00:03:24.600
+存储在寄存器R0中的值将存储在该存储位置
+the value stored in register R0 will be stored at this memory location 
+
+00:03:25.900 --> 00:03:31.900
+在堆栈的顶部。因此，推送总是很有索引。所以这意味着
+at the top of the stack. So for this, the push is always pretty indexed. So that means 
+
+00:03:32.800 --> 00:03:38.500
+它将在第一步中将堆栈指针减少4。
+it will decrease stack pointer by 4 in the first step. 
+
+00:03:40.500 --> 00:03:47.400
+然后它会将值存储在这里的给定内存位置。
+And then it will store the value at that given memory location here. 
+
+00:03:49.200 --> 00:03:56.200
+类似地，对于这里的第二条指令，它将首先递减地址
+Similarly for the second instruction here, it will first decrement the address 
+
+00:03:56.200 --> 00:04:02.700
+乘以4，然后它将存储寄存器R1指示的值，因此
+by 4 and then it will store the value pointed by register R1, so 
+
+00:04:04.100 --> 00:04:10.100
+这里43将被存储在堆的顶部。所以在执行这些之后
+here 43 will be stored at the top of the stack. So after the execution of these 
+
+00:04:10.100 --> 00:04:17.200
+两个指令，这里有42和43。所以堆栈指针将指向
+two instructions, we will have 42 and 43 here. So stack pointer will be pointing 
+
+00:04:17.399 --> 00:04:24.100
+设置为值43，如果执行此表示Pop的加载指令
+to the value 43 and if you execute this load instruction that represent Pop 
+
+00:04:24.100 --> 00:04:31.500
+R0，这实质上意味着将检索存储在堆栈顶部的值
+R0, which essentially means the value stored at the top of the stack will be retrieved 
+
+00:04:31.500 --> 00:04:33.700
+从这个记忆中
+from this memory and it will be 
+
+00:04:33.900 --> 00:04:42.900
+存储回寄存器R0。在这种情况下，R0是目的地。在推送指令的情况下，
+stored back to register R0. In this case R0 is the destination. In case of push instruction, 
+
+00:04:43.300 --> 00:04:48.200 
+R0是源。所以这是你应该尝试的主要区别
+R0 here is the source. So this is the main difference that you should try to 
+
+00:04:48.200 --> 00:04:53.400
+懂当你使用
+understand. and here when you use
+
+00:04:55.200 --> 00:05:00.500
+这里是加载指令，所以Pop总是后索引的。因此，您将首先加载
+a load instruction here, So Pop is always post-indexed. So you will first load 
+
+00:05:00.500 --> 00:05:07.400
+堆栈顶部的值。因此，在执行此指令之后
+the value from the top of the stack. So after when this instruction is executed 
+
+00:05:07.700 --> 00:05:15.000
+R0将用值43更新，因为堆栈指针指向该值。
+R0 will be updated with value 43 because stack pointer is pointing to this value. 
+
+00:05:16.900 --> 00:05:27.100
+然后它会将堆栈指针增加4
+And then it will increase the stack pointer by 4. So it will move to the next address 
+
+00:05:27.700 --> 00:05:35.700
+类似地，对于“Pop R1”的下一条指令，它将首先从
+and similarly for the next instruction for 'Pop R1' it will first load the value from 
+
+00:05:35.700 --> 00:05:37.300
+要注册的堆栈
+the stack to register 
+
+00:05:38.400 --> 00:05:44.100
+此处为R1。所以R1是目的地。所以R1现在包含42。
+R1 here. So R1 is the destination. So R1 will contain now 42. 
+
+00:05:45.400 --> 00:05:49.900
+然后它会将堆栈指针增加4
+And then it will increase the stack pointer by 4. Remember it is
+
+00:05:51.100 --> 00:05:58.600
+后索引，因此在执行这四条指令后，包含的值
+post-indexed and so after execution of these four instructions the value contained 
+
+00:05:58.600 --> 00:06:01.900
+R0和R1将被交换。
+by R0 and R1 will be swapped. 
+
+00:06:06.200 --> 00:06:12.100
+汇编器有一个伪指令，可以帮助您节省一些输入
+The assembler has a pseudo instructions which will help you to save some typing 
+
+00:06:12.100 --> 00:06:17.900
+当你写代码的时候。例如，如果您想推送这六个寄存器
+when you're writing code. For example, if you want to push these six registers 
+
+00:06:18.100 --> 00:06:22.300
+到堆栈中，您不需要逐个编写它们，只需使用此伪
+to the stack, you do not need to write them one by one you can just use this pseudo 
+
+00:06:22.300 --> 00:06:27.800
+正如这里提到的那样。因此它将推送多个寄存器值。
+instruction as it is as mentioned here. So it will push several registers values. 
+
+00:06:28.500 --> 00:06:35.800
+需要考虑的一点是，R3-R6表示寄存器R3、R4、R5
+One thing to consider is that this R3-R6 means for registers R3, R4,R5 
+
+00:06:36.400 --> 00:06:44.000
+总共有6个寄存器将被推送到堆栈上。这个
+and R6, there are 6 registers in total that will be pushed onto the stack. The 
+
+00:06:44.000 --> 00:06:49.400
+它们将按数字降序被推送。所以不管怎样
+order in which they will be pushed is in descending numerical order. So regardless 
+
+00:06:49.600 --> 00:06:56.100
+无论你在这里写什么顺序，它都会在这里推送最高的数字Register。
+whatever order you write here, It will always push the highest number Register here. 
+
+00:06:56.100 --> 00:07:03.800
+因此，在这种情况下，R6将被首先推压，R0将被最后推压，类似地
+So in this case R6 will be pushed first and R0 will be pushed last and similarly 
+
+00:07:03.800 --> 00:07:06.000
+对于这里的弹出指令，
+for the pop instruction here,
+
+00:07:06.600 --> 00:07:12.300
+您可以从堆栈中弹出多个值，并将它们存储回相应的
+you can pop multiple values from the stack and store them back into the corresponding 
+
+00:07:12.300 --> 00:07:19.100
+寄存器，但以数字升序排列，因此这意味着
+registers, but in ascending numerical order, so which means the top of,, the value 
+
+00:07:19.500 --> 00:07:27.800
+SP寄存器所指向的堆栈顶部将存储到寄存器R0。因此
+at the top of the stack pointed by SP register will be stored to register R0. so 
+
+00:07:27.800 --> 00:07:35.200
+首先弹出到R0，然后将堆栈中的最后一个值弹出到寄存器R6，因此它们
+popped first to R0 and pop the last value from stack to register R6, so they 
+
+00:07:35.200 --> 00:07:36.200
+总是在工作
+always work in 
+
+00:07:36.300 --> 00:07:43.200
+相反的顺序。一切都会回到原来的地方。所以如果你执行这些
+reverse order. Everything goes back where it came from. So if you execute these
+
+00:07:43.400 --> 00:07:49.100
+这两条指令是一样的。不会发生任何变化，不会交换值。
+these two instruction as it is. Nothing will change, the values will not be swapped. 
+
+00:07:52.400 --> 00:07:58.200
+下面这两个代码块之间有什么区别吗？只是暂停一下
+Is there any difference between the following these two blocks of code? Just pause 
+
+00:07:58.200 --> 00:08:00.800
+并尝试回答这个问题。
+the video and try to answer this question. 
+
+00:08:02.600 --> 00:08:09.200
+好吧，你一定已经明白了这两种操作是不一样的。例如
+Okay, you must have figured it out that these two operations are not same. For example, 
+
+00:08:09.700 --> 00:08:16.500
+在执行push和Pop指令后，R0和R1不会改变，因为
+after executing push and Pop instructions here R0 and R1 will not change because 
+
+00:08:17.100 --> 00:08:23.400
+这里是R1将被首先推送，然后R0将被推送，当您执行
+here are R1 will be pushed first, then R0 will be pushed and when you execute 
+
+00:08:23.400 --> 00:08:30.600
+因此此时堆栈顶部包含值R0和
+this instruction, so at this point the top of the stack contains value R0 and 
+
+00:08:30.900 --> 00:08:31.800
+该值将
+that value will 
+
+00:08:32.000 --> 00:08:38.000
+ be stored,, taken from that top of the stack and that will be stored back to register 
+
+00:08:38.000 --> 00:08:43.600
+R0，因此值不会改变。但在这种情况下，正如我前面所展示的
+R0 so the values will not change. But in this case as I have shown earlier, the 
+
+00:08:43.600 --> 00:08:45.000
+值将交换。
+values will swap. 
+
+00:08:49.300 --> 00:08:56.100
+是的，所以这是我创作的第一部分的结尾，给你更多
+yeah, so this is the end of the first part which I created to give you a more 
+
+00:08:56.100 --> 00:09:04.200
+详细说明了ARM汇编代码中堆栈的工作。在
+detailed explanation about the working of stack in ARM assembly code. In the 
+
+00:09:04.200 --> 00:09:10.800
+第二部分，我将向您展示如何使用堆栈进行方法调用，解释
+second part, I will show you how you can use the stack for method calls, explain 
+
+00:09:10.800 --> 00:09:17.900
+其中我将解释如何使用堆栈传递参数和
+in which I will explain how the stack can be used to pass parameters and to 
+
+00:09:19.300 --> 00:09:25.100
+以将结果保存在方法体中。所以有各种不同的目的
+to save the results within the method body. So there are various different purposes 
+
+00:09:25.100 --> 00:09:29.800
+堆栈的。所以我们将讨论，我将在本讲座的第二部分讨论。
+of the stack. So we will cover, I will cover that in the second part of this lecture. 
+
